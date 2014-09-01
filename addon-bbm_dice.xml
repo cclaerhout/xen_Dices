@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="bbm_dice" title="[BBM] Dice" version_string="1.0.1" version_id="1" url="" install_callback_class="Sedo_Dice_Installer" install_callback_method="install" uninstall_callback_class="Sedo_Dice_Installer" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="style_property_unit_bbm_dice_types"><![CDATA[<xen:require css="style_property_unit_bbm_dice_types.css" />
+
+<input type="hidden" name="checkboxes[]" value="{$property.property_definition_id}" />
+<xen:selectunit name="properties[{$property.property_definition_id}]" inputclass="bbm_dice_center" value="{$property.propertyValueScalar}" label="{$property.title}">	
+	<xen:option value="triangle" label="{xen:phrase sedo_bbm_dice_triangle}" />
+	<xen:option value="circle" label="{xen:phrase sedo_bbm_dice_circle}" />
+	<xen:option value="square" label="{xen:phrase sedo_bbm_dice_square}" />	
+	<xen:option value="pentagon" label="{xen:phrase sedo_bbm_dice_pentagon}" />
+	<xen:option value="hexagon" label="{xen:phrase sedo_bbm_dice_hexagon}" />
+	<xen:option value="diamond-square" label="{xen:phrase sedo_bbm_dice_diamond_square}" />
+	<xen:option value="diamond-shield" label="{xen:phrase sedo_bbm_dice_diamond_shield}" />
+	<xen:option value="burst-8" label="{xen:phrase sedo_bbm_dice_burst8}" />
+	<xen:option value="burst-12" label="{xen:phrase sedo_bbm_dice_burst12}" />
+	<xen:explain>{$property.description}</xen:explain>
+	<xen:html><xen:include template="style_property_unit_extra"><xen:set var="$reset">{xen:phrase reset}</xen:set></xen:include></xen:html>
+</xen:selectunit>]]></template>
+    <template title="style_property_unit_bbm_dice_types.css"><![CDATA[select.bbm_dice_center{
+	font-size:15px;
+	color:grey;
+	text-align:center;
+}]]></template>
+  </admin_templates>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="bbm_callback_precache" execute_order="10" callback_class="Sedo_Dice_Listener" callback_method="bbmDicePreCache" active="1" hint="" description="Bbm Dice PreCache Listener"/>
+    <listener event_id="bbm_callback_template_pre" execute_order="10" callback_class="Sedo_Dice_Listener" callback_method="bbmDice" active="1" hint="bbm_dice" description="Bbm Dice Pre Listener"/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups/>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="bbm_dice_error_empty_dice" version_id="0" version_string="1.0.0"><![CDATA[Empty dice !]]></phrase>
+    <phrase title="bbm_dice_error_missing_postid" version_id="1" version_string="1.0.0"><![CDATA[ (no postid)]]></phrase>
+    <phrase title="bbm_dice_error_outofscope" version_id="1" version_string="1.0.0"><![CDATA[Sorry, you can not throw any dice here.]]></phrase>
+    <phrase title="bbm_dice_error_tagsmapdisabled" version_id="1" version_string="1.0.0"><![CDATA[[Admin message] Uncheck the  Bbm option "Disable the Tags Map system"]]></phrase>
+    <phrase title="bbm_dice_thrown_dice" version_id="0" version_string="1.0.0"><![CDATA[Thrown dice:]]></phrase>
+    <phrase title="bbm_dice_thrown_die" version_id="0" version_string="1.0.0"><![CDATA[Thrown die:]]></phrase>
+    <phrase title="sedo_bbm_dice_burst12" version_id="0" version_string="1.0.0"><![CDATA[Burst 12]]></phrase>
+    <phrase title="sedo_bbm_dice_burst8" version_id="0" version_string="1.0.0"><![CDATA[Burst 8]]></phrase>
+    <phrase title="sedo_bbm_dice_circle" version_id="0" version_string="1.0.0"><![CDATA[Circle]]></phrase>
+    <phrase title="sedo_bbm_dice_diamond_shield" version_id="0" version_string="1.0.0"><![CDATA[Diamond shield]]></phrase>
+    <phrase title="sedo_bbm_dice_diamond_square" version_id="0" version_string="1.0.0"><![CDATA[Diamond square]]></phrase>
+    <phrase title="sedo_bbm_dice_hexagon" version_id="0" version_string="1.0.0"><![CDATA[Hexagon]]></phrase>
+    <phrase title="sedo_bbm_dice_pentagon" version_id="0" version_string="1.0.0"><![CDATA[Pentagon]]></phrase>
+    <phrase title="sedo_bbm_dice_square" version_id="0" version_string="1.0.0"><![CDATA[Square]]></phrase>
+    <phrase title="sedo_bbm_dice_triangle" version_id="0" version_string="1.0.0"><![CDATA[Triangle]]></phrase>
+    <phrase title="style_property_bbm_dice_burst12_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_burst12_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Burst-12 background color]]></phrase>
+    <phrase title="style_property_bbm_dice_burst12_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_burst12_color_master" version_id="0" version_string="1.0.0"><![CDATA[Burst-12 text color]]></phrase>
+    <phrase title="style_property_bbm_dice_burst8_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_burst8_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Burst-8 background color]]></phrase>
+    <phrase title="style_property_bbm_dice_burst8_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_burst8_color_master" version_id="0" version_string="1.0.0"><![CDATA[Burst-8 text color]]></phrase>
+    <phrase title="style_property_bbm_dice_circle_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_circle_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Circle background color]]></phrase>
+    <phrase title="style_property_bbm_dice_circle_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_circle_color_master" version_id="0" version_string="1.0.0"><![CDATA[Circle text color]]></phrase>
+    <phrase title="style_property_bbm_dice_d100_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d100_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D100 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d10_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d10_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D10 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d12_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d12_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D12 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d20_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d20_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D20 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d40_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d40_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D40 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d4_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d4_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D4 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d6_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d6_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D6 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_d8_shape_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_d8_shape_master" version_id="0" version_string="1.0.0"><![CDATA[D8 shape]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondshield_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondshield_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Diamond-shield background color]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondshield_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondshield_color_master" version_id="0" version_string="1.0.0"><![CDATA[Diamond-shield text color]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondsquare_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondsquare_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Diamond-square background color]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondsquare_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_diamondsquare_color_master" version_id="0" version_string="1.0.0"><![CDATA[Diamond-square text color]]></phrase>
+    <phrase title="style_property_bbm_dice_hexagon_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_hexagon_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Hexagon background color]]></phrase>
+    <phrase title="style_property_bbm_dice_hexagon_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_hexagon_color_master" version_id="0" version_string="1.0.0"><![CDATA[Hexagon text color]]></phrase>
+    <phrase title="style_property_bbm_dice_pentagon_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_pentagon_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Pentagon background color]]></phrase>
+    <phrase title="style_property_bbm_dice_pentagon_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_pentagon_color_master" version_id="0" version_string="1.0.0"><![CDATA[Pentagon text color]]></phrase>
+    <phrase title="style_property_bbm_dice_square_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_square_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Square background color]]></phrase>
+    <phrase title="style_property_bbm_dice_square_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_square_color_master" version_id="0" version_string="1.0.0"><![CDATA[Square text color]]></phrase>
+    <phrase title="style_property_bbm_dice_triangle_bg_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_triangle_bg_master" version_id="0" version_string="1.0.0"><![CDATA[Triangle background color]]></phrase>
+    <phrase title="style_property_bbm_dice_triangle_color_description_master" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="style_property_bbm_dice_triangle_color_master" version_id="0" version_string="1.0.0"><![CDATA[Triangle text color]]></phrase>
+    <phrase title="style_property_group_bbm_dice_master" version_id="0" version_string="1.0.0"><![CDATA[[Bb Codes & Buttons Manager] Dice]]></phrase>
+    <phrase title="style_property_group_bbm_dice_master_desc" version_id="0" version_string="1.0.0"><![CDATA[]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties>
+    <property property_name="bbm_dice_d4_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D4 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="10" sub_group="dice_shape"><![CDATA[triangle]]></property>
+    <property property_name="bbm_dice_d6_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D6 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="20" sub_group="dice_shape"><![CDATA[square]]></property>
+    <property property_name="bbm_dice_d8_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D8 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="30" sub_group="dice_shape"><![CDATA[diamond-square]]></property>
+    <property property_name="bbm_dice_d10_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D10 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="40" sub_group="dice_shape"><![CDATA[diamond-shield]]></property>
+    <property property_name="bbm_dice_d12_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D12 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="50" sub_group="dice_shape"><![CDATA[pentagon]]></property>
+    <property property_name="bbm_dice_d20_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D20 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="50" sub_group="dice_shape"><![CDATA[hexagon]]></property>
+    <property property_name="bbm_dice_d40_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D40 shape" description="" css_components="" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="60" sub_group="dice_shape"><![CDATA[burst-8]]></property>
+    <property property_name="bbm_dice_d100_shape" property_type="scalar" definition="1" group_name="bbm_dice" title="D100 shape" description="" css_components="text,background,border,layout,extra" scalar_type="template" scalar_parameters="style_property_unit_bbm_dice_types" display_order="70" sub_group="dice_shape"><![CDATA[burst-12]]></property>
+    <property property_name="bbm_dice_triangle_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Triangle background color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="100" sub_group="dice_shape_triangle"><![CDATA[rgb(18, 6, 111)]]></property>
+    <property property_name="bbm_dice_triangle_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Triangle text color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="110" sub_group="dice_shape_triangle"><![CDATA[rgb(254, 254, 31)]]></property>
+    <property property_name="bbm_dice_circle_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Circle background color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="200" sub_group="dice_shape_circle"><![CDATA[rgb(239, 239, 153)]]></property>
+    <property property_name="bbm_dice_circle_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Circle text color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="210" sub_group="dice_shape_circle"><![CDATA[rgb(214, 114, 47)]]></property>
+    <property property_name="bbm_dice_square_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Square background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="300" sub_group="dice_shape_square"><![CDATA[rgb(248, 215, 248)]]></property>
+    <property property_name="bbm_dice_square_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Square text color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="310" sub_group="dice_shape_square"><![CDATA[rgb(32, 29, 32)]]></property>
+    <property property_name="bbm_dice_pentagon_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Pentagon background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="400" sub_group="dice_shape_pentagon"><![CDATA[rgb(253, 115, 115)]]></property>
+    <property property_name="bbm_dice_pentagon_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Pentagon text color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="410" sub_group="dice_shape_pentagon"><![CDATA[rgb(156, 39, 39)]]></property>
+    <property property_name="bbm_dice_hexagon_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Hexagon background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="500" sub_group="dice_shape_hexagon"><![CDATA[rgb(154, 243, 143)]]></property>
+    <property property_name="bbm_dice_hexagon_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Hexagon text color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="510" sub_group="dice_shape_hexagon"><![CDATA[rgb(34, 122, 22)]]></property>
+    <property property_name="bbm_dice_diamondsquare_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Diamond-square background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="600" sub_group="dice_shape_diamondsquare"><![CDATA[rgb(225, 139, 242)]]></property>
+    <property property_name="bbm_dice_diamondsquare_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Diamond-square text color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="610" sub_group="dice_shape_diamondsquare"><![CDATA[rgb(139, 13, 125)]]></property>
+    <property property_name="bbm_dice_diamondshield_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Diamond-shield background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="700" sub_group="dice_shape_diamondshield"><![CDATA[rgb(243, 207, 0)]]></property>
+    <property property_name="bbm_dice_diamondshield_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Diamond-shield text color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="710" sub_group="dice_shape_diamondshield"><![CDATA[rgb(85, 85, 77)]]></property>
+    <property property_name="bbm_dice_burst8_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Burst-8 background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="800" sub_group="dice_shape_burst8"><![CDATA[rgb(22, 156, 168)]]></property>
+    <property property_name="bbm_dice_burst8_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Burst-8 text color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="810" sub_group="dice_shape_burst8"><![CDATA[rgb(244, 241, 241)]]></property>
+    <property property_name="bbm_dice_burst12_bg" property_type="scalar" definition="1" group_name="bbm_dice" title="Burst-12 background color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="800" sub_group="dice_shape_burst12"><![CDATA[rgb(217, 0, 0)]]></property>
+    <property property_name="bbm_dice_burst12_color" property_type="scalar" definition="1" group_name="bbm_dice" title="Burst-12 text color" description="" css_components="text,background,border,layout,extra" scalar_type="color" scalar_parameters="" display_order="810" sub_group="dice_shape_burst12"><![CDATA[rgb(255, 255, 255)]]></property>
+    <group group_name="bbm_dice" display_order="13240">
+      <title>[Bb Codes &amp; Buttons Manager] Dice</title>
+      <description></description>
+    </group>
+  </style_properties>
+  <templates>
+    <template title="bbm_dice" version_id="1" version_string="1.0.1"><![CDATA[<xen:require css="bbm_dice.css" />
+<xen:if is="{$options.error}">
+	<xen:if is="{$options.error} == 'noPostId' OR {$options.error} == 'invalidController'">
+		<xen:if is="{$xenOptions.Bbm_TagsMap_Disable} AND {$visitor.is_admin}">
+			<span class="bbm_dice error">{xen:phrase bbm_dice_error_tagsmapdisabled}</span>
+		<xen:else />			
+			<span class="bbm_dice error">{xen:phrase bbm_dice_error_outofscope} {xen:if "{$options.error} == 'noPostId'", "{xen:phrase bbm_dice_error_missing_postid}"}</span>
+		</xen:if>
+	<xen:elseif is="{$options.error} == 'emptyDice'" />
+		<span class="bbm_dice error">{xen:phrase bbm_dice_error_empty_dice}</span>
+	<xen:else />
+		<span class="bbm_dice error">{xen:phrase error}</span>	
+	</xen:if>
+<xen:else />
+	<div class="bbm_dice_title">{xen:if '{$options.diceNumber} == 1', '{xen:phrase bbm_dice_thrown_die}', '{xen:phrase bbm_dice_thrown_dice}'}</div>
+	<div class="bbm_dice results">
+		<xen:foreach loop="$options.dice" value="$dice" i="$i" count="$total">
+			<div class="dice_box Tooltip" title="d{$dice.t}">
+				<div class="dice dice_{$dice.t} {$dice.class} r_{$dice.v}"><span>{$dice.v}</span></div>
+			</div>			
+		</xen:foreach>
+	</div>
+</xen:if>
+]]></template>
+    <template title="bbm_dice.css" version_id="0" version_string="1.0.0"><![CDATA[.bbm_dice_title{
+	font-size: 9pt;
+	color: {xen:property primaryLightish};
+}
+
+.bbm_dice.results {
+	border: 1px dotted {xen:property primaryLighter};
+}
+
+.bbm_dice .dice_box {
+	display: inline-block;
+	width: 48px;
+	height: 48px;
+	line-height: 48px;
+	vertical-align: middle;
+	margin: 8px;
+	cursor: pointer;
+	zoom:1;
+	*display:inline;
+}
+
+.bbm_dice .dice > span {
+	display: block;
+	font-weight: 900;
+	position: relative;
+	text-align: center;
+	width: 48px;
+	z-index: 100;
+}
+
+<xen:comment>
+	Css source: http://css-tricks.com/examples/ShapesOfCSS
+</xen:comment>
+
+.bbm_dice .square {
+	width: 43px;
+	height: 43px;
+	position: relative;
+	background: {xen:property bbm_dice_square_bg};
+	top: 2px;
+}
+
+.bbm_dice .square > span {
+	color: {xen:property bbm_dice_square_color};
+	left: -3px;
+}
+
+.bbm_dice .triangle {
+	width: 0;
+	height: 0;
+	position: relative;
+	top: 2px;
+	border-left: 22px solid transparent;
+	border-right: 22px solid transparent;
+	border-bottom: 44px solid {xen:property bbm_dice_triangle_bg};
+}
+
+.bbm_dice .triangle > span {
+	color: {xen:property bbm_dice_triangle_color};
+	left: -24px;
+	top: 2px;
+}
+
+.bbm_dice .circle {
+	width: 43px;
+	height: 43px;
+	background: {xen:property bbm_dice_circle_bg};
+	border-radius: 25px;
+	position: relative;
+	top: 2px;
+}
+
+.bbm_dice .circle > span {
+	color: {xen:property bbm_dice_circle_color};
+	left: -2px;
+	top: -2px;
+}
+
+.bbm_dice .pentagon { 
+	position: relative;
+	width: 27px;
+	border-width: 25px 9px 0;
+	border-style: solid;
+	border-color: {xen:property bbm_dice_pentagon_bg} transparent;
+	top: 18px;
+}
+
+.bbm_dice .pentagon:before {
+	content: ""; 
+	position: absolute;
+	height: 0;
+	width: 0;
+	top: -43px;
+	left: -9px;
+	border-width: 0 23px 18px;
+	border-style: solid;
+	border-color: transparent transparent {xen:property bbm_dice_pentagon_bg};
+}
+
+.bbm_dice .pentagon > span {
+	color: {xen:property bbm_dice_pentagon_color};
+	left: -10px;
+	top: -42px;
+}
+
+.bbm_dice .hexagon { 
+	width: 45px;
+	height: 25px;
+	background: {xen:property bbm_dice_hexagon_bg};
+	position: relative;
+	top: 12px;
+} 
+
+.bbm_dice .hexagon:before { 
+	content: ""; 
+	position: absolute;
+	top: -12px;
+	left: 0;
+	width: 0;
+	height: 0;
+	border-left: 23px solid transparent;
+	border-right: 23px solid transparent;
+	border-bottom: 13px solid {xen:property bbm_dice_hexagon_bg};
+}
+
+.bbm_dice .hexagon:after {
+	content: "";
+	position: absolute;
+	bottom: -12px;
+	left: 0;
+	width: 0;
+	height: 0;
+	border-left: 22px solid transparent;
+	border-right: 22px solid transparent;
+	border-top: 12px solid {xen:property bbm_dice_hexagon_bg};
+}
+
+.bbm_dice .hexagon > span {
+	color: {xen:property bbm_dice_hexagon_color};
+	left: -2px;
+	top: -12px;
+}
+
+.bbm_dice .diamond-square { 
+	width: 0; 
+	height: 0; 
+	border: 25px solid transparent; 
+	border-bottom-color: {xen:property bbm_dice_diamondsquare_bg};
+	position: relative;
+	top: -25px;
+}
+
+.bbm_dice .diamond-square:after {
+	content: ''; 
+	position: absolute;
+	left: -25px;
+	top: 25px;
+	width: 0;
+	height: 0;
+	border: 25px solid transparent;
+	border-top-color: {xen:property bbm_dice_diamondsquare_bg};
+}
+
+.bbm_dice .diamond-square > span {
+	color: {xen:property bbm_dice_diamondsquare_color};
+	left: -23px;
+}
+
+.bbm_dice .diamond-shield {
+	width: 0;
+	height: 0;
+	border: 25px solid transparent;
+	border-bottom: 10px solid {xen:property bbm_dice_diamondshield_bg};
+	position: relative;
+	top: -22px;
+} 
+
+.bbm_dice .diamond-shield:after {
+	content: '';
+	position: absolute;
+	left: -25px;
+	top: 10px;
+	width: 0;
+	height: 0;
+	border: 25px solid transparent;
+	border-top: 35px solid {xen:property bbm_dice_diamondshield_bg}; 
+}
+
+.bbm_dice .diamond-shield > span {
+	color: {xen:property bbm_dice_diamondshield_color};
+	left: -23px;
+	top: -8px;
+}
+
+.bbm_dice .burst-8 { 
+	background: {xen:property bbm_dice_burst8_bg};
+	width: 40px;
+	height: 40px;
+	position: relative;
+	text-align: center;
+	top: 2px;
+	-webkit-transform: rotate(20deg);
+	-moz-transform: rotate(20deg);
+	-ms-transform: rotate(20deg);
+	-o-transform: rotate(20deg);
+	-transform: rotate(20deg);	
+}
+
+.bbm_dice .burst-8:before {
+	content: ""; 
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 40px;
+	width: 40px;
+	background: {xen:property bbm_dice_burst8_bg};
+	-webkit-transform: rotate(135deg);
+	-moz-transform: rotate(135deg);
+	-ms-transform: rotate(135deg);
+	-o-transform: rotate(135deg);
+	transform: rotate(135deg);
+}
+
+.bbm_dice .burst-8 > span {
+	color: {xen:property bbm_dice_burst8_color};
+	left: -5px;
+	top: -6px;
+	-webkit-transform: rotate(-20deg);
+	-moz-transform: rotate(-20deg);
+	-ms-transform: rotate(-20deg);
+	-o-transform: rotate(-20deg);	
+	transform: rotate(-20deg);
+}
+
+.bbm_dice .burst-12 {
+	background: {xen:property bbm_dice_burst12_bg};
+	width: 40px;
+	height: 40px;
+	position: relative;
+	text-align: center;
+	top: 2px;
+}
+
+.bbm_dice .burst-12:before, .bbm_dice .burst-12:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 40px;
+	width: 40px;
+	background: {xen:property bbm_dice_burst12_bg};
+}
+
+.bbm_dice .burst-12:before {
+	-webkit-transform: rotate(30deg);
+	-moz-transform: rotate(30deg);
+	-ms-transform: rotate(30deg);
+	-o-transform: rotate(30deg);
+	transform: rotate(30deg);
+} 
+
+.bbm_dice .burst-12:after { 
+	-webkit-transform: rotate(60deg);
+	-moz-transform: rotate(60deg);
+	-ms-transform: rotate(60deg);
+	-o-transform: rotate(60deg);
+	transform: rotate(60deg);
+}
+
+.bbm_dice .burst-12 > span {
+	color: {xen:property bbm_dice_burst12_color};
+	left: -4px;
+	top: -6px;
+}]]></template>
+  </templates>
+  <public_template_modifications/>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>

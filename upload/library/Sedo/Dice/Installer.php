@@ -1,5 +1,5 @@
 <?php
-class Sedo_Dices_Installer
+class Sedo_Dice_Installer
 {
 	public static function install($addon)
 	{
@@ -10,20 +10,32 @@ class Sedo_Dices_Installer
 			//Force uninstall on fresh install
 			self::uninstall();
 
-			$db->query("CREATE TABLE IF NOT EXISTS bbm_dices (             
-			        		postid INT NOT NULL,
-      						code TEXT NOT NULL,
-						PRIMARY KEY (postid)
-					)
-		                	ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;"
-			);
+			if(self::tableExists('bbm_dices'))
+			{
+				$db->query("RENAME TABLE bbm_dices TO bbm_dice;");
+			}
+			else
+			{
+				$db->query("CREATE TABLE IF NOT EXISTS bbm_dice (             
+				        		postid INT NOT NULL,
+	      						code TEXT NOT NULL,
+							PRIMARY KEY (postid)
+						)
+			                	ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;"
+				);
+			}
 		}
 	}
 	
 	public static function uninstall()
 	{
 		$db = XenForo_Application::get('db');
-		$db->query("DROP TABLE IF EXISTS bbm_dices");
+		$db->query("DROP TABLE IF EXISTS bbm_dice");
+	}
+
+	public static function tableExists($tableName){
+		$db = XenForo_Application::get('db');
+		return ($db->query("SHOW TABLES LIKE '$tableName'")->rowCount() > 0) ? true : false;
 	}
 	
 	public static function addColumnIfNotExist($db, $table, $field, $attr)

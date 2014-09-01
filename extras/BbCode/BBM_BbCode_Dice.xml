@@ -2,16 +2,16 @@
 <bbm_bbcodes>
   <BbCode>
     <General>
-      <tag>dices</tag>
-      <title><![CDATA[[BBM] Dices]]></title>
+      <tag>dice</tag>
+      <title><![CDATA[[BBM] Dice]]></title>
       <description><![CDATA[To do]]></description>
-      <example><![CDATA[[dices]D4;D20[/dices]
-[dices]D4;2xD20[/dices]
-[dices]D4;D20;D20[/dices]]]></example>
+      <example><![CDATA[[dice]D4;D20[/dice]
+[dice]D4;2xD20[/dice]
+[dice]D4;D20;D20[/dice]]]></example>
       <active>1</active>
       <display_help>0</display_help>
-      <bbcode_id>bbm_dices</bbcode_id>
-      <bbcode_addon>bbm_dices</bbcode_addon>
+      <bbcode_id>bbm_dice</bbcode_id>
+      <bbcode_addon>bbm_dice</bbcode_addon>
     </General>
     <Methods>
       <Replacement>
@@ -21,7 +21,7 @@
       </Replacement>
       <Template>
         <active>1</active>
-        <name>bbm_dices</name>
+        <name>bbm_dice</name>
         <callback_class/>
         <callback_method/>
       </Template>
