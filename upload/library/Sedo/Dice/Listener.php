@@ -15,7 +15,8 @@ class Sedo_Dice_Listener
 
 	public static function bbmDice(&$content, array &$options, &$templateName, &$fallBack, array $rendererStates, $parentClass, $bbCodeIdentifier)
 	{
-		$postId = $parentClass->getPostParam('post_id');
+		$oPostId = $postId = $parentClass->getPostParam('post_id');
+
 		$options['dice'] = array();
 		$options['error'] = false;
 	
@@ -30,39 +31,73 @@ class Sedo_Dice_Listener
 			return;		
 		}
 
-		if($parentClass->getView()->createOwnTemplateObject()->getParam('controllerName') != 'XenForo_ControllerPublic_Thread')
+		if($parentClass->bbmGetControllerName() != 'XenForo_ControllerPublic_Thread')
 		{
 			$options['error'] = 'invalidController';
 			return;		
 		}
 
+		/*Quote management*/
+		$quotedPostId = null;
+		if($parentClass->bbmGetParentTag() == 'quote')
+		{
+			$quotedPostId = self::getQuotedPostId($rendererStates['tagDataStack'][0]);
+
+			if($quotedPostId)
+			{
+				$postId = $quotedPostId;
+			}
+		}
+
 		/*PreCache section*/
 		if(!empty($rendererStates['bbmPreCacheInit']))
 		{
-			$parentClass->pushBbmPreCacheData('bbmDicePostIds', $postId);
+			$parentClass->pushBbmPreCacheData('bbmDicePostIds', $oPostId);
+			
+			if($quotedPostId)
+			{
+				$parentClass->pushBbmPreCacheData('bbmDicePostIds', $quotedPostId);
+			}
 			return;
          	}
 
+		/*Check if previous results are available in the view*/
+		$previousResults = $parentClass->getTagExtra("results_{$postId}");
+
 		/*Get data section*/
 		$data = false;
-		
-        	if(!empty($rendererStates['bbmPreCacheComplete']))
-		{
-			$bbmPreCacheBbmDice = $parentClass->getBbmPreCacheData('bbmDicePostData');
+		$processUnserialize = true;
+		$noMatchedValue = false;
 
-			if(isset($bbmPreCacheBbmDice[$postId], $bbmPreCacheBbmDice[$postId]['code']))
-			{
-				$data = $bbmPreCacheBbmDice[$postId]['code'];
-			}
+		if($previousResults)
+		{
+			$data = $previousResults;
 		}
 		else
 		{
-			$data = self::_getBbmDiceModel()->getDiceByPostId($postId);
-			$data = $data['code'];
+	        	if(!empty($rendererStates['bbmPreCacheComplete']))
+			{
+				$bbmPreCacheBbmDice = $parentClass->getBbmPreCacheData('bbmDicePostData');
+				
+				if(isset($bbmPreCacheBbmDice[$postId], $bbmPreCacheBbmDice[$postId]['code']))
+				{
+					$data = $bbmPreCacheBbmDice[$postId]['code'];
+					$parentClass->addTagExtra("results_{$postId}", $data);
+				}
+				else
+				{
+					$noMatchedValue = true;
+				}
+			}
+			else
+			{
+				$data = self::_getBbmDiceModel()->getDiceByPostId($postId);
+				$data = $data['code'];
+			}
 		}
 
 		/*Data record section*/
-		if(!$data)
+		if(!$data && !$quotedPostId)//what about fake quote? => error
 		{
 			$data = array_map('trim', explode(';', $content));
 			$authorizedDiceType = array(4, 6, 8, 10, 12, 20, 40, 100);
@@ -124,30 +159,49 @@ class Sedo_Dice_Listener
 				'postid' => $postId,
 				'code' => $dice
 			);
+			
+			$previousResults = $parentClass->getTagExtra("results_{$postId}");
 
-			$dw = XenForo_DataWriter::create('Sedo_Dice_DataWriter_Dice');
-			$dw->bulkSet($bulkSet);
-			$dw->save();
+			if(!$previousResults)
+			{
+				$dw = XenForo_DataWriter::create('Sedo_Dice_DataWriter_Dice');
+				$dw->bulkSet($bulkSet);
+				$dw->save();
+	
+				$parentClass->addTagExtra("results_{$postId}", $dice);
+				$noMatchedValue = false;
+			}
+			else
+			{
+				$dice = $previousResults;
+			}
 		}
 		else
 		{
-			$dice = unserialize($data);
-			
-			/*Blank dice*/
-			if($dice === NULL)
-			{
-				$options['error'] = 'emptyDice';
-				return;
-			}
+			$dice = ($processUnserialize) ? unserialize($data) : $data;
 		}
+
+		if($noMatchedValue)
+		{
+			$options['error'] = 'cantRenderDice';
+			return;	
+		}
+
+		/*Blank dice*/
+		if($dice === NULL)
+		{
+			$options['error'] = 'emptyDice';
+			return;
+		}		
 
 		/*Data management section*/
 		foreach($dice as &$die)
 		{
 			$die['class'] = self::_getDiceShape($die['t']);
 		}
-		
+
 		$options['dice'] = $dice;
+		$options['diceNumber'] = count($dice);
 	}
 
 	protected static $_diceShape = array();
@@ -170,6 +224,34 @@ class Sedo_Dice_Listener
 		}
 		 
 		return self::$_bbmDiceModel;
+	}
+	
+	public static function getQuotedPostId($parentTagInfo)
+	{
+		if(!isset($parentTagInfo['option']))
+		{
+			return null;
+		}
+		
+		$postId = null;
+		$quoteOptions = explode(',', $parentTagInfo['option']);
+
+		foreach($quoteOptions as $quoteOption)
+		{
+			if(strpos($quoteOption, 'post:') === false)
+			{
+				continue;
+			}
+			
+			$postInfo = explode(':', $quoteOption);
+
+			if(isset($postInfo[1]))
+			{
+				$postId = (int) filter_var($postInfo[1], FILTER_SANITIZE_NUMBER_INT);
+			}
+		}
+		
+		return $postId;
 	}
 }
 //Zend_Debug::dump($dice);

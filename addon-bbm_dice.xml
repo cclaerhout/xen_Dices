@@ -42,6 +42,7 @@
     <interface_groups/>
   </permissions>
   <phrases>
+    <phrase title="bbm_dice_error_cant_render_dice" version_id="1" version_string="1.0.1"><![CDATA[These dice can't be rendered]]></phrase>
     <phrase title="bbm_dice_error_empty_dice" version_id="0" version_string="1.0.0"><![CDATA[Empty dice !]]></phrase>
     <phrase title="bbm_dice_error_missing_postid" version_id="1" version_string="1.0.0"><![CDATA[ (no postid)]]></phrase>
     <phrase title="bbm_dice_error_outofscope" version_id="1" version_string="1.0.0"><![CDATA[Sorry, you can not throw any dice here.]]></phrase>
@@ -156,6 +157,8 @@
 		</xen:if>
 	<xen:elseif is="{$options.error} == 'emptyDice'" />
 		<span class="bbm_dice error">{xen:phrase bbm_dice_error_empty_dice}</span>
+	<xen:elseif is="{$options.error} == 'cantRenderDice'" />
+		<span class="bbm_dice error">{xen:phrase bbm_dice_error_cant_render_dice}</span>
 	<xen:else />
 		<span class="bbm_dice error">{xen:phrase error}</span>	
 	</xen:if>
