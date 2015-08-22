@@ -66,7 +66,6 @@ class Sedo_Dice_Listener
 
 		/*Get data section*/
 		$data = false;
-		$processUnserialize = true;
 		$noMatchedValue = false;
 
 		if($previousResults)
@@ -81,7 +80,7 @@ class Sedo_Dice_Listener
 				
 				if(isset($bbmPreCacheBbmDice[$postId], $bbmPreCacheBbmDice[$postId]['code']))
 				{
-					$data = $bbmPreCacheBbmDice[$postId]['code'];
+					$data = @unserialize($bbmPreCacheBbmDice[$postId]['code']);
 					$parentClass->addTagExtra("results_{$postId}", $data);
 				}
 				else
@@ -92,7 +91,10 @@ class Sedo_Dice_Listener
 			else
 			{
 				$data = self::_getBbmDiceModel()->getDiceByPostId($postId);
-				$data = $data['code'];
+				if(isset($data['code']))
+				{
+					$data = @unserialize($data['code']);
+				}
 			}
 		}
 
@@ -178,7 +180,7 @@ class Sedo_Dice_Listener
 		}
 		else
 		{
-			$dice = ($processUnserialize) ? unserialize($data) : $data;
+			$dice = $data;
 		}
 
 		if($noMatchedValue)
