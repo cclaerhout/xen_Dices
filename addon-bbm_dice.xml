@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bbm_dice" title="[BBM] Dice" version_string="1.0.1" version_id="1" url="" install_callback_class="Sedo_Dice_Installer" install_callback_method="install" uninstall_callback_class="Sedo_Dice_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bbm_dice" title="[BBM] Dice" version_string="1.0.2" version_id="2" url="" install_callback_class="Sedo_Dice_Installer" install_callback_method="install" uninstall_callback_class="Sedo_Dice_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -43,8 +43,11 @@
   </permissions>
   <phrases>
     <phrase title="bbm_dice_error_cant_render_dice" version_id="1" version_string="1.0.1"><![CDATA[These dice can't be rendered]]></phrase>
-    <phrase title="bbm_dice_error_empty_dice" version_id="0" version_string="1.0.0"><![CDATA[Empty dice !]]></phrase>
     <phrase title="bbm_dice_error_missing_postid" version_id="1" version_string="1.0.0"><![CDATA[ (no postid)]]></phrase>
+    <phrase title="bbm_dice_error_empty_dice" version_id="2" version_string="1.0.2"><![CDATA[Empty dice]]></phrase>
+    <phrase title="bbm_dice_error_invalid_dice_format" version_id="2" version_string="1.0.2"><![CDATA[Invalid dice format]]></phrase>
+    <phrase title="bbm_dice_error_invalid_sized_die_x" version_id="2" version_string="1.0.2"><![CDATA[Invalid sized die - {die}]]></phrase>
+    <phrase title="bbm_dice_error_too_many_dice" version_id="2" version_string="1.0.2"><![CDATA[Too many dice]]></phrase>
     <phrase title="bbm_dice_error_outofscope" version_id="1" version_string="1.0.0"><![CDATA[Sorry, you can not throw any dice here.]]></phrase>
     <phrase title="bbm_dice_error_tagsmapdisabled" version_id="1" version_string="1.0.0"><![CDATA[[Admin message] Uncheck the  Bbm option "Disable the Tags Map system"]]></phrase>
     <phrase title="bbm_dice_thrown_dice" version_id="0" version_string="1.0.0"><![CDATA[Thrown dice:]]></phrase>
@@ -148,19 +151,20 @@
   </style_properties>
   <templates>
     <template title="bbm_dice" version_id="1" version_string="1.0.1"><![CDATA[<xen:require css="bbm_dice.css" />
-<xen:if is="{$options.error}">
-	<xen:if is="{$options.error} == 'noPostId' OR {$options.error} == 'invalidController'">
+<xen:if is="{$options.error} or {$options.error_phrase}">
+	{$options.content}
+    <xen:if is="{$options.error} == 'noPostId' OR {$options.error} == 'invalidController'">
 		<xen:if is="{$xenOptions.Bbm_TagsMap_Disable} AND {$visitor.is_admin}">
 			<span class="bbm_dice error">{xen:phrase bbm_dice_error_tagsmapdisabled}</span>
 		<xen:else />			
 			<span class="bbm_dice error">{xen:phrase bbm_dice_error_outofscope} {xen:if "{$options.error} == 'noPostId'", "{xen:phrase bbm_dice_error_missing_postid}"}</span>
 		</xen:if>
-	<xen:elseif is="{$options.error} == 'emptyDice'" />
-		<span class="bbm_dice error">{xen:phrase bbm_dice_error_empty_dice}</span>
-	<xen:elseif is="{$options.error} == 'cantRenderDice'" />
-		<span class="bbm_dice error">{xen:phrase bbm_dice_error_cant_render_dice}</span>
 	<xen:else />
-		<span class="bbm_dice error">{xen:phrase error}</span>	
+		<xen:if is="{$options.error_phrase}">
+			<span class="bbm_dice error">{xen:raw $options.error_phrase}</span>	
+		<xen:else />
+			<span class="bbm_dice error">{xen:phrase error}</span>	
+		</xen:if>
 	</xen:if>
 <xen:else />
 	<div class="bbm_dice_title">{xen:if '{$options.diceNumber} == 1', '{xen:phrase bbm_dice_thrown_die}', '{xen:phrase bbm_dice_thrown_dice}'}</div>

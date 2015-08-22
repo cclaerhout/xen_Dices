@@ -59,7 +59,7 @@ class Sedo_Dice_Listener
 				$parentClass->pushBbmPreCacheData('bbmDicePostIds', $quotedPostId);
 			}
 			return;
-         	}
+		}
 
 		/*Check if previous results are available in the view*/
 		$previousResults = $parentClass->getTagExtra("results_{$postId}");
@@ -67,6 +67,7 @@ class Sedo_Dice_Listener
 		/*Get data section*/
 		$data = false;
 		$noMatchedValue = false;
+        $hasRow = false;
 
 		if($previousResults)
 		{
@@ -80,6 +81,7 @@ class Sedo_Dice_Listener
 				
 				if(isset($bbmPreCacheBbmDice[$postId], $bbmPreCacheBbmDice[$postId]['code']))
 				{
+					$hasRow = true;
 					$data = @unserialize($bbmPreCacheBbmDice[$postId]['code']);
 					$parentClass->addTagExtra("results_{$postId}", $data);
 				}
@@ -93,6 +95,7 @@ class Sedo_Dice_Listener
 				$data = self::_getBbmDiceModel()->getDiceByPostId($postId);
 				if(isset($data['code']))
 				{
+					$hasRow = true;
 					$data = @unserialize($data['code']);
 				}
 			}
@@ -101,81 +104,31 @@ class Sedo_Dice_Listener
 		/*Data record section*/
 		if(!$data && !$quotedPostId)//what about fake quote? => error
 		{
-			$data = array_map('trim', explode(';', $content));
-			$authorizedDiceType = array(4, 6, 8, 10, 12, 20, 40, 100);
-			
-			$dice = array();
-			
-			foreach($data as $die)
+			try
 			{
-				$die = strtolower($die);
-				
-				if(strpos($die, 'd') === false)
-				{
-					continue;
-				}
-				
-				$wipDice = explode('d', $die);
-				$dieNumber = 1;
-				
-				if(isset($wipDice[1]))
-				{
-					//Dice prefix found
-					$dieNumber = filter_var($wipDice[0], FILTER_SANITIZE_NUMBER_INT);
-					
-					if($dieNumber <= 0)
-					{
-						$dieNumber = 1;
-					}
-					
-					$dieType = filter_var($wipDice[1], FILTER_SANITIZE_NUMBER_INT);
-				}
-				else
-				{
-					$dieType = filter_var($wipDice[0], FILTER_SANITIZE_NUMBER_INT);				
-				}
-				
-				if(!in_array($dieType, $authorizedDiceType))
-				{
-					//The dice type is not correct
-					continue;
-				}
-				
-				while ($dieNumber > 0)
-				{
-					$dice[] = array(
-						't' => $dieType,
-						'v' => mt_rand(1, $dieType)
-					);
-					
-					$dieNumber--;
-				}
-			}
-			
-			if(empty($dice))
-			{
-				$dice = null;
-			}
+				$dice = self::_getBbmDiceModel()->rollDice($content);
 
-			$bulkSet = array(
-				'postid' => $postId,
-				'code' => $dice
-			);
-			
-			$previousResults = $parentClass->getTagExtra("results_{$postId}");
+				$bulkSet = array(
+					'postid' => $postId,
+					'code' => $dice
+				);
 
-			if(!$previousResults)
-			{
 				$dw = XenForo_DataWriter::create('Sedo_Dice_DataWriter_Dice');
+				if ($hasRow)
+				{
+					$dw->setExistingData($postId);
+				}
 				$dw->bulkSet($bulkSet);
 				$dw->save();
-	
+
 				$parentClass->addTagExtra("results_{$postId}", $dice);
 				$noMatchedValue = false;
 			}
-			else
+			catch(Sedo_Dice_Exception $e)
 			{
-				$dice = $previousResults;
+				$options['content'] = $parentClass->renderInvalidTag($rendererStates['tagDataStack'][0], $rendererStates);
+                $options['error_phrase'] = $e->getMessage();
+				return;
 			}
 		}
 		else
@@ -185,14 +138,16 @@ class Sedo_Dice_Listener
 
 		if($noMatchedValue)
 		{
-			$options['error'] = 'cantRenderDice';
+			$options['content'] = $parentClass->renderInvalidTag($rendererStates['tagDataStack'][0], $rendererStates);
+			$options['error_phrase'] = new XenForo_Phrase('bbm_dice_error_cant_render_dice');
 			return;	
 		}
 
 		/*Blank dice*/
 		if($dice === NULL)
 		{
-			$options['error'] = 'emptyDice';
+			$options['content'] = $parentClass->renderInvalidTag($rendererStates['tagDataStack'][0], $rendererStates);
+			$options['error_phrase'] = new XenForo_Phrase('bbm_dice_error_empty_dice');
 			return;
 		}		
 
